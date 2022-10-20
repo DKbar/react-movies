@@ -1,78 +1,75 @@
 import React from "react";
 
-export class Search extends React.Component {
-    constructor(props) {
-        super(props);
+export const Search = (props) => {
+    const [search, setSearch] = React.useState('')
+    const [type, setType] = React.useState('all')
 
-        this.state = {
-            search: '',
-            type: 'all'
-        }
+    const handleSearch = (e) => {
+        setSearch(e.target.value)
     }
 
-    handleSearch = (e) => {
-        this.setState({[e.target.name]: e.target.value})
+    const handleType = (e) => {
+        setType(e.target.value)
+        props.onSearchChange({search, type: e.target.value})
     }
 
-    handleKey = (e) => {
+    const handleKey = (e) => {
         if (e.key === 'Enter') {
-            this.props.onSearchChange(this.state)
+            props.onSearchChange({search, type})
         }
     }
 
-    onClick = () => {
-        this.props.onSearchChange(this.state)
+    const onClick = () => {
+        props.onSearchChange({search, type})
     }
 
-    render() {
-        return <div className="row">
-            <div className="input-field">
-                <input
-                        type="search"
-                        name="search"
-                        placeholder="search"
-                        className="validate"
-                        value={this.state.search}
-                        onChange={this.handleSearch}
-                        onKeyDown={this.handleKey}
-                />
-                <button className="btn search-btn" onClick={() => this.onClick()}>
-                    Search
-                </button>
+    return <div className="row">
+        <div className="input-field">
+            <input
+                    type="search"
+                    name="search"
+                    placeholder="search"
+                    className="validate"
+                    value={search}
+                    onChange={handleSearch}
+                    onKeyDown={handleKey}
+            />
+            <button className="btn search-btn" onClick={() => onClick()}>
+                Search
+            </button>
 
-                <div className='radio-btn'>
-                    <label>
-                        <input
-                                name="type"
-                                type="radio"
-                                value='all'
-                                checked={this.state.type === 'all'}
-                                onChange={this.handleSearch}
-                        />
-                        <span>All</span>
-                    </label>
-                    <label>
-                        <input
-                               name="type"
-                               type="radio"
-                               value='movie'
-                               checked={this.state.type === 'movie'}
-                               onChange={this.handleSearch}
-                        />
-                        <span>Movie only</span>
-                    </label>
-                    <label>
-                        <input
-                                name="type"
-                                type="radio"
-                                value='series'
-                                checked={this.state.type === 'series'}
-                                onChange={this.handleSearch}
-                        />
-                        <span>Series only</span>
-                    </label>
-                </div>
+            <div className='radio-btn'>
+                <label>
+                    <input
+                            name="type"
+                            type="radio"
+                            value='all'
+                            checked={type === 'all'}
+                            onChange={handleType}
+                    />
+                    <span>All</span>
+                </label>
+                <label>
+                    <input
+                            name="type"
+                            type="radio"
+                            value='movie'
+                            checked={type === 'movie'}
+                            onChange={handleType}
+                    />
+                    <span>Movie only</span>
+                </label>
+                <label>
+                    <input
+                            name="type"
+                            type="radio"
+                            value='series'
+                            checked={type === 'series'}
+                            onChange={handleType}
+                    />
+                    <span>Series only</span>
+                </label>
             </div>
         </div>
-    }
+    </div>
 }

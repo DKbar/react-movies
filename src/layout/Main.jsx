@@ -5,42 +5,44 @@ import {Search} from "../components/Search";
 
 const API_KEY = process.env.REACT_APP_API_KEY;
 
-export class Main extends React.Component {
-    state = {
-        movies: [],
-        loading: true,
-        currentSearch: 'matrix'
-    }
+export const Main = () => {
+    const [movies, setMovies] = React.useState([]);
+    const [loading, setLoading] = React.useState(true);
 
+    React.useEffect(() => {
+                fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=matrix`)
+                        .then(response => response.json())
+                        .then(data => {
+                            setMovies(data.Search)
+                            setLoading(false)
+                        })
+                        .catch((err) => {
+                            console.error(err)
+                            setLoading(false)
+                        })
+            },
+            []
+    )
 
-    componentDidMount() {
-        fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=matrix`)
+    const searchMovies = ({search, type}) => {
+        setLoading(true)
+        fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${search}${type !== 'all' ? `&type=${type}` : ''}`)
                 .then(response => response.json())
-                .then(data => this.setState({movies: data.Search, loading: false}))
+                .then(data => {
+                    setMovies(data.Search);
+                    setLoading(false)
+                })
                 .catch((err) => {
                     console.error(err)
-                    this.setState({ loading: false })
+                    setLoading(false)
                 })
     }
 
-    searchMovies = ({search, type}) => {
-        this.setState({loading: true})
-        fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${search}${type !== 'all'? `&type=${type}` : '' }`)
-                .then(response => response.json())
-                .then(data => this.setState({movies: data.Search, loading: false}))
-                .catch((err) => {
-                    console.error(err)
-                    this.setState({ loading: false })
-                })
-    }
-
-    render() {
-        return <main className='container content'>
-            <Search onSearchChange={this.searchMovies}/>
-            {!this.state.loading
-                    ? <Movies movies={this.state.movies}/>
-                    : <Preloader />
-            }
-        </main>
-    }
+    return <main className='container content'>
+        <Search onSearchChange={searchMovies}/>
+        {!loading
+                ? <Movies movies={movies}/>
+                : <Preloader/>
+        }
+    </main>
 }
